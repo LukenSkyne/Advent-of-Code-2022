@@ -30,4 +30,12 @@ func main() {
 
 	sort.Sort(sort.Reverse(sort.IntSlice(sums)))
 	fmt.Println("Part 1:", sums[0])
+
+	sumOfThree := 0
+
+	for _, item := range sums[:3] {
+		sumOfThree += item
+	}
+
+	fmt.Println("Part 2:", sumOfThree)
 }
