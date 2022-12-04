@@ -7,7 +7,7 @@ fn main() {
 
 	let part_1 = input.split("\n")
 		.filter(|line| !line.is_empty())
-		.map(|rucksack| rucksack.split_at((rucksack.len() as f32 * 0.5) as usize))
+		.map(|rucksack| rucksack.split_at((rucksack.len() / 2) as usize))
 		.map(|(left, right)| {
 			left.chars().find(|&x| right.chars().find(|&y| x == y).is_some()).unwrap()
 		})
