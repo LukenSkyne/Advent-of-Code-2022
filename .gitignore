@@ -1,2 +1,5 @@
+# JetBrains IDE cache
+.idea
+
 # rust compiler output
 /target
