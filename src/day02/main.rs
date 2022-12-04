@@ -14,84 +14,51 @@ fn main() {
     println!("Day02");
 
 	let input = fs::read_to_string("./input/day02.txt").unwrap();
-	
-	let part_1 = input.split("\n")
+	let processed = input.split("\n")
 		.filter(|a| !a.is_empty())
 		.map(|round| round.split_once(" ").unwrap())
 		.map(|(opp, you)| (
 			opp.as_bytes()[0] as i32 - 'A' as i32,
 			you.as_bytes()[0] as i32 - 'X' as i32
-		))
-		.map(|(opp, you)| {
-			let mut score = you + 1;
+		)).collect::<Vec<_>>();
 
-			if opp == you {
-				score += 3;
-			} else if
-				(is(you, Tool::Rock) && is(opp, Tool::Scissors)) ||
-				(is(you, Tool::Paper) && is(opp, Tool::Rock)) ||
-				(is(you, Tool::Scissors) && is(opp, Tool::Paper)) {
-				score += 6;
-			}
+	let calc_score = |(opp, you)| {
+		let mut score = you + 1;
 
-			score
-		})
+		if opp == you {
+			score += 3;
+		} else if
+		(is(you, Tool::Rock) && is(opp, Tool::Scissors)) ||
+			(is(you, Tool::Paper) && is(opp, Tool::Rock)) ||
+			(is(you, Tool::Scissors) && is(opp, Tool::Paper)) {
+			score += 6;
+		}
+
+		score
+	};
+
+	let part_1 = processed.iter()
+		.map(|&game| calc_score(game))
 		.sum::<i32>();
 
-	let part_2 = input.split("\n")
-		.filter(|a| !a.is_empty())
-		.map(|round| round.split_once(" ").unwrap())
-		.map(|(opp, you)| (
-			opp.as_bytes()[0] as i32 - 'A' as i32,
-			you.as_bytes()[0] as i32 - 'X' as i32
-		))
-		.map(|(opp, mut you)| {
-			match you {
-				0 => {
-					// lose
-					if is(opp, Tool::Rock) {
-						you = Tool::Scissors as i32
-					} else if is(opp, Tool::Paper) {
-						you = Tool::Rock as i32
-					} else if is(opp, Tool::Scissors) {
-						you = Tool::Paper as i32
-					}
-				},
-				1 => {
-					// draw
-					you = opp
-				},
-				2 => {
-					// win
-					if is(opp, Tool::Rock) {
-						you = Tool::Paper as i32
-					} else if is(opp, Tool::Paper) {
-						you = Tool::Scissors as i32
-					} else if is(opp, Tool::Scissors) {
-						you = Tool::Rock as i32
-					}
-				},
-				_ => {},
+	println!("Part1: {:?}", part_1);
+
+	let part_2 = processed.iter()
+		.map(|&(opp, mut you)| {
+			if you == 1 {
+				you = opp;
+			} else if is(opp, Tool::Rock) {
+				you = if you == 2 { Tool::Paper as i32 } else { Tool::Scissors as i32 };
+			} else if is(opp, Tool::Paper) {
+				you = if you == 2 { Tool::Scissors as i32 } else { Tool::Rock as i32 };
+			} else if is(opp, Tool::Scissors) {
+				you = if you == 2 { Tool::Rock as i32 } else { Tool::Paper as i32 };
 			}
 
 			(opp, you)
 		})
-		.map(|(opp, you)| {
-			let mut score = you + 1;
-
-			if opp == you {
-				score += 3;
-			} else if
-				(is(you, Tool::Rock) && is(opp, Tool::Scissors)) ||
-				(is(you, Tool::Paper) && is(opp, Tool::Rock)) ||
-				(is(you, Tool::Scissors) && is(opp, Tool::Paper)) {
-				score += 6;
-			}
-
-			score
-		})
+		.map(|game| calc_score(game))
 		.sum::<i32>();
 
-	println!("Part1: {:?}", part_1);
 	println!("Part2: {:?}", part_2);
 }
